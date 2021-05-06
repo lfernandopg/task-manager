@@ -1,5 +1,4 @@
-import React, { useContext, useEffect } from 'react'
-import useForm from '../../hooks/useForm'
+import React, { useContext } from 'react'
 import ProjectContext from '../../context/project/ProjectContext'
 import TaskContext from '../../context/task/TaskContext'
 import { isEmptyField } from '../../helpers'
@@ -7,37 +6,32 @@ import { isEmptyField } from '../../helpers'
 const FormTask = () => {
 
     const { selectedProject } = useContext(ProjectContext)
-    const { selectedTask, errorFormTask, addTask, showErrorTask, updateTask, getTasks } = useContext(TaskContext)
-
-    const { values, handleInputChange, setValues, reset } = useForm({
-        name : '',
-    })
-
-    useEffect(() => {
-        if (selectedTask !== null) {
-            setValues({
-                name : selectedTask.name
-            })
-        } else {
-            reset()
-        }
-    }, [selectedTask])
+    const { 
+        editTask,
+        errorFormTask, 
+        addTask, 
+        setErrorFormTask,
+        setEditTask, 
+        updateTask,
+        task,
+        inputChangeTask,
+        resetTask
+    } = useContext(TaskContext)
 
     const onSubmit = e => {
         e.preventDefault()
-        if (isEmptyField(values.name)) {
-            showErrorTask()
+        if (isEmptyField(task.name)) {
+            setErrorFormTask(true)
             return
         }
 
-        if (selectedTask !== null) {
-            const updatedTask = {...selectedTask, name : values.name}
-            updateTask(updatedTask)
+        if (editTask) {
+            updateTask(task.id)
         } else {
-            addTask(values, selectedProject.id)
+            addTask(selectedProject.id)
         }
-        getTasks(selectedProject.id)
-        reset()
+        setEditTask(false)
+        resetTask()
     }
 
     if (!selectedProject) {
@@ -55,15 +49,15 @@ const FormTask = () => {
                         className="input-text"
                         placeholder="Nombre de la tarea"
                         name="name"
-                        onChange={handleInputChange}
-                        value={values.name}    
+                        onChange={inputChangeTask}
+                        value={task.name}    
                     />
                 </div>
                 <div className="contenedor-input">
                     <input 
                         type="submit"
                         className="btn btn-primario btn-submit btn-block"
-                        value={selectedTask ? "Editar Tarea" : "Agregar Tarea"}
+                        value={editTask ? "Editar Tarea" : "Agregar Tarea"}
                     /> 
                 </div>
             </form>

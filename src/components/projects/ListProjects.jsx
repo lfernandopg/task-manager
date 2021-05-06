@@ -5,14 +5,15 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const ListProjects = () => {
 
-    const { projects, getProjects } = useContext(ProjectContext)
+    const { listProjects, fetchProjects } = useContext(ProjectContext)
 
     useEffect(() => {
-        getProjects()
+        fetchProjects()
+        // eslint-disable-next-line
     }, [])
 
 
-    if (projects.length === 0 ) {
+    if (listProjects.length === 0 ) {
         return <h2>No hay proyectos</h2>
     }
 
@@ -22,11 +23,11 @@ const ListProjects = () => {
             <ul className="Listado-proyectos">
 
             <TransitionGroup>
-            {projects.map( project => (
+            {listProjects.map( project => (
                 <CSSTransition
                     key={project.id}
                     timeout={200}
-                    classNames="proyecto"
+                    className="proyecto"
                 >
                     <Project
                         project={project}

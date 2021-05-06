@@ -6,10 +6,17 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 const ListTasks = () => {
     
-    const { tasks } = useContext(TaskContext)
-    const { selectedProject, deleteProject } = useContext(ProjectContext)
+    const { listTasks, deleteTask } = useContext(TaskContext)
+    const { selectedProject, unselectProject, deleteProject } = useContext(ProjectContext)
 
-    
+    const onClickDelete = id => {
+        deleteProject(id)
+        listTasks.forEach(task => {
+            deleteTask(task.id)
+        });
+        unselectProject()
+    }
+
     if (!selectedProject) {
         return <h2>Selecciona un proyecto</h2>
     }
@@ -18,15 +25,15 @@ const ListTasks = () => {
         <Fragment>
             <h2>Proyecto: {selectedProject.name}</h2>
             <ul className="listado-tareas">
-                { tasks.length === 0 ?
+                { listTasks.length === 0 ?
                     (<li className="tarea"><p>No hay tareas</p></li>)
                 :
                     <TransitionGroup>
-                    {tasks.map(task => (
+                    {listTasks.map(task => (
                         <CSSTransition
                             key={task.id}
                             timeout={200}
-                            classNames="tarea"
+                            className="tarea"
                         >
                             <Task
                                 task={task}
@@ -40,7 +47,7 @@ const ListTasks = () => {
             <button
                 type="button"
                 className="btn btn-eliminar"
-                onClick={() => deleteProject(selectedProject.id)}
+                onClick={() => onClickDelete(selectedProject.id)}
             >Eliminar Proyecto &times;</button>  
         </Fragment>  
     );

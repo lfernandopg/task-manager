@@ -1,54 +1,51 @@
 import { 
-    GET_TASKS,
+    SET_TASKS,
+    SET_TASK,
     ADD_TASK,
-    ERROR_FORM_TASK,
+    SET_ERROR_FORM_TASK,
     DELETE_TASK,
-    SELECT_TASK,
-    UNSELECT_TASK,
     UPDATE_TASK,
+    SET_EDIT_TASK
 } from '../types';
 
 const TaskReducer = (state, action) => {
     const { type, payload } = action
 
     switch(type) {
-        case GET_TASKS:
+        case SET_TASKS:
             return {
                 ...state,
-                tasks: payload
+                listTasks: [...payload]
             }
         case ADD_TASK:
             return {
                 ...state,
-                tasks: [payload, ...state.tasks, ],
-                errorFormTask: false
+                listTasks: [ payload, ...state.listTasks ]
             }
-        case ERROR_FORM_TASK:
+        case SET_ERROR_FORM_TASK:
             return {
                 ...state,
-                errorFormTask: true,
+                errorFormTask: payload
             }
         case DELETE_TASK:
             return {
                 ...state,
-                tasks: payload,
-                selectedTask: null
+                listTasks: state.listTasks.filter(task => (task.id !== payload) )
             }
         case UPDATE_TASK:
             return {
                 ...state,
-                tasks: payload,
-                selectedTask: null
+                listTasks: state.listTasks.map(task => task.id === payload.id ? payload : task )
             }
-        case SELECT_TASK:
+        case SET_TASK:
             return {
                 ...state,
-                selectedTask: payload
+                task: {...payload}
             }
-        case UNSELECT_TASK:
+        case SET_EDIT_TASK:
             return {
                 ...state,
-                selectedTask: null
+                editTask: payload
             }
         default:
             return state;

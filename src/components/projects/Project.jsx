@@ -3,22 +3,44 @@ import ProjectContext from '../../context/project/ProjectContext'
 import TaskContext from '../../context/task/TaskContext'
 
 const Project = ({ project }) => {
-    const { selectProject } = useContext(ProjectContext)
-    const { getTasks, unselectTask } = useContext(TaskContext)
+    const { selectProject, setEditProject, setActiveFormProject, getProject } = useContext(ProjectContext)
+    const { fetchTasks, setEditTask } = useContext(TaskContext)
 
-    const onClick = id => {
+    const onClickSelect = id => {
         selectProject(id)
-        getTasks(id)
-        unselectTask()
+        fetchTasks(id)
+        setEditTask(false)
+        setEditProject(false)
+        setActiveFormProject(false)
+    }
+
+    const onClickEdit = id => {
+        getProject(id)
+        setEditProject(true)
     }
 
     return (  
         <li>
-            <button
-                type="button"
-                className="btn btn-blank"
-                onClick={() => onClick(project.id)}
-            >{project.name}</button>
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                }}
+            >
+                <button
+                    type="button"
+                    className="btn btn-blank"
+                    onClick={() => onClickSelect(project.id)}
+                >{project.name}</button>
+                <i 
+                    className="fas fa-edit"
+                    style={{
+                        marginLeft: "10px",
+                    }}
+                    onClick={() => onClickEdit(project.id)}
+
+                />
+            </div>
         </li>
     );
 }

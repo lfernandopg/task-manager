@@ -1,25 +1,39 @@
 import React, { Fragment, useContext } from 'react'
-import useForm from '../../hooks/useForm'
 import { isEmptyField } from '../../helpers'
 import ProjectContext from '../../context/project/ProjectContext'
 
 const FormProject = () => {
 
-    const { activeFormProject, errorFormProject, showFormProject, addProject, showErrorProject  } = useContext(ProjectContext)
-
-    const { values, handleInputChange, reset } = useForm({
-        name : '',
-    })
-
+    const { 
+        editProject, 
+        activeFormProject, 
+        errorFormProject, 
+        setActiveFormProject, 
+        addProject, 
+        setErrorFormProject,
+        setEditProject,
+        updateProject,
+        inputChangeProject,
+        resetProject,
+        project
+    } = useContext(ProjectContext)
 
     const onSubmit = (e) => {
         e.preventDefault()
-        if (isEmptyField(values.name)) {
-            showErrorProject()
+
+        if (isEmptyField(project.name)) {
+            setErrorFormProject(true)
             return
         }
-        addProject(values)
-        reset()
+
+        if (editProject) {
+            updateProject(project.id)
+        } else {
+            addProject()
+        }
+        setEditProject(false)
+        setActiveFormProject(false)
+        resetProject()
     }
 
     return (
@@ -27,9 +41,9 @@ const FormProject = () => {
         <button
             type="button"
             className="btn btn-block btn-primario"
-            onClick={ () => showFormProject() }
+            onClick={ () => setActiveFormProject(true) }
         >Nuevo Proyecto</button>
-        { activeFormProject ?
+        { (activeFormProject || editProject) ?
             (
             <form 
                 className="formulario-nuevo-proyecto"
@@ -40,13 +54,13 @@ const FormProject = () => {
                     className="input-text"
                     placeholder="Nombre del proyecto"
                     name="name"
-                    onChange={handleInputChange}
-                    value={values.name}
+                    onChange={inputChangeProject}
+                    value={project.name}
                 />
                 <input 
                     type="submit"
                     className="btn btn-primario btn-block"
-                    value="Agregar Proyecto"
+                    value={ editProject ? "Editar Proyecto" : "Agregar Proyecto" }
                 />
             </form>
             )

@@ -1,18 +1,20 @@
-export const GET_PROJECTS = 'GET_PROJECTS'; 
+export const SET_PROJECTS = 'GET_PROJECTS'; 
 export const ADD_PROJECT = 'ADD_PROJECT';
 export const UPDATE_PROJECT = 'UPDATE_PROJECT';
 export const DELETE_PROJECT = 'DELETE_PROJECT';
 export const SELECT_PROJECT = 'SELECT_PROJECT';
 export const UNSELECT_PROJECT = 'UNSELECT_PROJECT';
-export const ERROR_FORM_PROJECT = 'ERROR_FORM_PROJECT';
-export const SHOW_FORM_PROJECT = 'SHOW_FORM_PROJECT';
+export const SET_ERROR_FORM_PROJECT = 'SET_ERROR_FORM_PROJECT';
+export const SET_ACTIVE_FORM_PROJECT = 'SET_ACTIVE_FORM_PROJECT';
+export const SET_EDIT_PROJECT = 'SET_EDIT_PROJECT';
+export const SET_PROJECT = 'SET_PROJECT';
 
-export const GET_TASKS = 'GET_TASKS';
+export const SET_TASKS = 'SET_TASKS';
 export const ADD_TASK = 'ADD_TASK';
 export const UPDATE_TASK = 'UPDATE_TASK';
 export const DELETE_TASK = 'DELETE_TASK';
-export const SELECT_TASK = 'SELECT_TASK';
-export const UNSELECT_TASK = 'UNSELECT_TASK';
-export const ERROR_FORM_TASK = 'ERROR_FORM_TASK';
+export const SET_EDIT_TASK = 'SET_EDIT_TASK';
+export const SET_TASK = 'SET_TASK';
+export const SET_ERROR_FORM_TASK = ' SET_ERROR_FORM_TASK';
 
 

@@ -1,25 +1,25 @@
 import React, { useContext } from 'react'
 import TaskContext from '../../context/task/TaskContext'
-import ProjectContext from '../../context/project/ProjectContext'
 
 const Task = ({task}) => {
 
-    const { selectedProject } = useContext(ProjectContext)
-    const { deleteTask, getTasks, updateTask, selectTask } = useContext(TaskContext)
+    const { deleteTask, getTask, updateTask, setEditTask } = useContext(TaskContext)
 
     const onClickDelete = id => {
         deleteTask(id)
-        getTasks(selectedProject.id)
+        setEditTask(false)
     }
     
-    const onClickSelect = id => {
-        selectTask(id)
+    const onClickEdit = id => {
+        setEditTask(true)
+        getTask(id)
     } 
 
-    const onClickStatus = finished => {
-        const updatedTask = {...task, finished}
-        updateTask(updatedTask)
-        getTasks(selectedProject.id)
+    const onClickStatus = (id, finished) => {
+        updateTask(id, {
+            ...task,
+            finished
+        })
     }
 
     return (  
@@ -31,7 +31,7 @@ const Task = ({task}) => {
                         <button
                             type="button"
                             className="completo"
-                            onClick={() => onClickStatus(false)}
+                            onClick={() => onClickStatus(task.id, false)}
                         >Completo</button>
                     )
                 :
@@ -39,7 +39,7 @@ const Task = ({task}) => {
                         <button
                             type="button"
                             className="incompleto"
-                            onClick={() => onClickStatus(true)}
+                            onClick={() => onClickStatus(task.id, true)}
                         >Incompleto</button>
                     ) 
 
@@ -49,7 +49,7 @@ const Task = ({task}) => {
                 <button
                     type="button"
                     className="btn btn-primario"
-                    onClick={() => onClickSelect(task.id)}
+                    onClick={() => onClickEdit(task.id)}
                 >Editar</button>
 
                 <button

@@ -4,107 +4,163 @@ import TaskReducer from './TaskReducer'
 import { v4 as uuid } from 'uuid';
 
 import { 
-    GET_TASKS,
+    SET_TASKS,
+    SET_TASK,
     ADD_TASK,
-    ERROR_FORM_TASK,
+    SET_ERROR_FORM_TASK,
     DELETE_TASK,
-    SELECT_TASK,
-    UNSELECT_TASK,
     UPDATE_TASK,
+    SET_EDIT_TASK
 } from '../types';
-
-let tasks =  [
-    { id : 1, name : 'Elegir Plataforma', finished: true, projectId : 1 },
-    { id : 2, name : 'Elegir Colores', finished: true, projectId :  2 },
-    { id : 3, name : 'Elegir Hosting', finished: false, projectId : 3 }
-]
 
 const TaskState = props => {
 
+    const initialTask = {
+        id : null,
+        name : '',
+        finished : false,
+        projectId : null
+    }
+
     const initialState = {
-        tasks : [],
-        selectedTask : null,
-        errorFormTask : false
+        listTasks : [],
+        errorFormTask : false,
+        editTask : false,
+        task : initialTask
     }
 
     const [state, dispatch] = useReducer(TaskReducer, initialState)
 
-    const getTasks = (projectId) => {
+    const fetchTasks = projectId => {
 
-        const projectTasks = tasks.filter( task => ( task.projectId === projectId))
-
-        dispatch({
-            type: GET_TASKS,
-            payload: projectTasks
-        })
+        let listTasks = JSON.parse(localStorage.getItem('listTasks'));
+        if (listTasks) {
+            const projectTasks = listTasks.filter( task => ( task.projectId === projectId))
+            dispatch({
+                type : SET_TASKS,
+                payload : projectTasks
+            })
+        }
     }
 
-    const addTask = (task, projectId) => {
-        task.id = uuid()
-        task.finished = false
-        task.projectId = projectId
-        tasks = [...tasks, task]
+    const getTask = id => {
+        let listTasks = JSON.parse(localStorage.getItem('listTasks'));
+        if (listTasks) {
+            const [ task ] = state.listTasks.filter(task => (task.id === id) )
+            dispatch({
+                type : SET_TASK,
+                payload : task
+            })
+        }
+    }
+
+    const addTask = (projectId) => {
+        let listTask = JSON.parse(localStorage.getItem('listTasks'));
+        if (!listTask) {
+            listTask = [];
+        }
+        let task = {
+            ...state.task, 
+            id : uuid(),
+            projectId : projectId
+        }
+        localStorage.setItem('listTasks', JSON.stringify([
+            ...state.listTasks,
+            task 
+        ]));
         dispatch({
             type : ADD_TASK,
             payload : task
         })
     }
 
-    const updateTask = (updatedTask) => {
+    const updateTask = (id, updatedTask = null) => {
+        if (!updatedTask) {
+            updatedTask = state.task
+        }
+        console.log(updatedTask)
+        let listTasks = JSON.parse(localStorage.getItem('listTasks'));
 
-        tasks = tasks.map(task => (task.id === updatedTask.id ? updatedTask : task) )
+        listTasks = state.listTasks.map(task => (task.id === updatedTask.id ? updatedTask : task) )
+        localStorage.setItem('listTasks', JSON.stringify([...listTasks]));
         dispatch({
             type : UPDATE_TASK,
-            payload : tasks
+            payload : updatedTask
         })
     }
 
     const deleteTask = id => {
 
-        tasks = tasks.filter( task => (task.id !== id))
+        let listTasks = JSON.parse(localStorage.getItem('listTasks'));
+        listTasks = state.listTasks.filter(task => (task.id !== id) )
+        localStorage.setItem('listTasks', JSON.stringify([...listTasks]));
         dispatch({
             type : DELETE_TASK,
-            payload : tasks
+            payload : id
         })
     }
 
-    const selectTask = id => {
-
-        const [task] = tasks.filter( task => (task.id === id))
+    const setEditTask = editTask => {
 
         dispatch({
-            type : SELECT_TASK,
+            type : SET_EDIT_TASK,
+            payload : editTask
+        })
+
+    }
+
+    const setTask = task => {
+        dispatch({
+            type : SET_TASK,
             payload : task
         })
     }
 
-    const unselectTask = () => {
+    const setErrorFormTask = errorFormTask => {
         dispatch({
-            type : UNSELECT_TASK,
+            type : SET_ERROR_FORM_TASK,
+            payload : errorFormTask
         })
     }
 
-
-    const showErrorTask = () => {
-        dispatch({
-            type : ERROR_FORM_TASK,
-        })
+    const inputChangeTask = ({ target }) => {
+        let property = target.name;
+        let value = target.value;
+        if (state.task.hasOwnProperty(property)) {
+            dispatch({
+                type : SET_TASK,
+                payload : {
+                    ...state.task,
+                    [ property ] : value 
+                }
+            })
+        }
     }
 
+    const resetTask = () => {
+        dispatch({
+            type : SET_TASK,
+            payload : initialTask
+        })
+    }
 
     return(
         <TaskContext.Provider
             value={{
-                tasks : state.tasks,
-                selectedTask: state.selectedTask,
+                listTasks : state.listTasks,
+                editTask: state.editTask,
                 errorFormTask: state.errorFormTask,
-                getTasks,
+                task : state.task,
+                fetchTasks,
+                getTask,
                 addTask,
                 updateTask,
                 deleteTask,
-                selectTask,
-                unselectTask,
-                showErrorTask
+                setEditTask,
+                setTask,
+                setErrorFormTask,
+                inputChangeTask,
+                resetTask
             }}
         >
             {props.children}

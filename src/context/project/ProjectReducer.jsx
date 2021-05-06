@@ -1,44 +1,50 @@
   
 import { 
-    GET_PROJECTS,
+    SET_PROJECTS,
     ADD_PROJECT,
+    UPDATE_PROJECT,
     DELETE_PROJECT,
     SELECT_PROJECT,
     UNSELECT_PROJECT,
-    ERROR_FORM_PROJECT,
-    SHOW_FORM_PROJECT
+    SET_ERROR_FORM_PROJECT,
+    SET_EDIT_PROJECT,
+    SET_ACTIVE_FORM_PROJECT,
+    SET_PROJECT
 } from '../types';
 
 const ProjectReducer = (state, action) => {
     const { payload, type } = action
 
     switch(type) {
-        case SHOW_FORM_PROJECT:
+        case SET_PROJECTS:
             return {
                 ...state,
-                activeFormProject: true
+                listProjects : [...payload]
             }
-        case GET_PROJECTS:
+        case SET_PROJECT: 
             return {
                 ...state,
-                projects: payload
+                project : {...payload}
+            }
+        case UPDATE_PROJECT:
+            return {
+                ...state,
+                listProjects : state.listProjects.map(project => project.id === payload.id ? payload : project )
             }
         case ADD_PROJECT:
             return {
                 ...state,
-                projects: [payload, ...state.projects, ],
-                activeFormProject: false,
-                errorFormProject: false
+                listProjects: [payload, ...state.listProjects ]
             }
-        case ERROR_FORM_PROJECT:
+        case SET_ERROR_FORM_PROJECT:
             return {
                 ...state, 
-                errorFormProject: true
+                errorFormProject: payload
             }
         case SELECT_PROJECT:
             return {
                 ...state,
-                selectedProject: payload
+                selectedProject: {...payload}
             }
         case UNSELECT_PROJECT:
             return {
@@ -48,8 +54,17 @@ const ProjectReducer = (state, action) => {
         case DELETE_PROJECT:
             return {
                 ...state,
-                projects: payload,
-                selectedProject: null
+                listProjects : state.listProjects.filter(project => (project.id !== payload) )
+            }
+        case SET_EDIT_PROJECT: 
+            return {
+                ...state,
+                editProject: payload
+            }
+        case SET_ACTIVE_FORM_PROJECT:
+            return {
+                ...state,
+                activeFormProject: payload
             }
         default:
             return state;
